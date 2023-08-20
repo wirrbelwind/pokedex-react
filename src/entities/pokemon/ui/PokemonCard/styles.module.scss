@@ -1,0 +1,28 @@
+@import '/src/app/root-styles/vars';
+
+.container {
+	padding: 0.5rem;
+	border: 2px solid $black;
+	text-align: center;
+	background: white;
+
+	transition: background 0.1s ease;
+	&:hover {
+		// scale: 1.25;
+		background: $primary-light;
+	}
+
+	.avatar {
+		width: 100%;
+		object-fit: contain;
+	}
+	.name {
+		font-weight: bold;
+		font-size: 1.2rem;
+		// text-align: center;
+	
+		margin-top: 0.5rem;
+	}
+
+}
+

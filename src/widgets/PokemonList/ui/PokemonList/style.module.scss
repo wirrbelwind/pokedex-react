@@ -1,0 +1,16 @@
+.container {
+	
+}
+.list {
+	display: grid;
+	margin-top: 1rem;
+	grid-template-columns: 1fr 1fr 1fr;
+	gap: 1rem;
+	@media (max-width: 753px) {
+		grid-template-columns: 1fr 1fr;
+		gap: 0.5rem;
+	}
+	@media (max-width: 646px) {
+		grid-template-columns: 1fr;
+	}
+}

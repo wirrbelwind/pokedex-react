@@ -1,0 +1,14 @@
+@import '/src/app/root-styles/vars.scss';
+
+.element-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+
+	margin-top: 1rem;
+}
+.element {
+	padding: 0.2rem 0.4rem;
+	border: 1px solid $black;
+	border-radius: .3rem;
+}

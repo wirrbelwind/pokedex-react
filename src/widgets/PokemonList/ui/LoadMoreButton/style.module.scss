@@ -1,0 +1,10 @@
+@import '/src/app/root-styles/vars';
+
+.button {
+	padding: 0.5rem 1rem;
+	background: $primary;
+	font-size: 1.2rem;
+	border-radius: 5px;
+	width: 100%;
+	margin-top: 1rem;
+}

@@ -1,0 +1,34 @@
+@import '/src/app/root-styles/vars';
+
+.container {
+	display: flex;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+}
+.btn {
+	padding: 1rem;
+	border-radius: 3px;
+	border: 1px solid $black;
+
+	transition: background-color .1s ease-in;
+	&:hover {
+		background-color: lightgray;
+	}
+
+	@media (max-width: 915px) {
+		padding: 0.3rem;
+	}
+}
+.active {
+	background: $primary-light;
+	&:hover {
+	background: $primary-light;
+	}
+}
+.resetBtn {
+	background-color: gray;
+	color: white;
+	&:disabled {
+		cursor: not-allowed;
+	}
+}

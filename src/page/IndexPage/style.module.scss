@@ -1,0 +1,30 @@
+@import '/src//app/root-styles/vars';
+
+.page {
+	max-width: 1024px;
+	margin: 0 auto;
+	padding: 1rem 0.5rem;
+}
+
+.inner {
+	display: flex;
+	gap: 1rem;
+	position: relative;
+}
+.title {
+	font-size: 3rem;
+	font-weight: bold;
+	padding: 1rem;
+	border: 1px solid $black;
+	text-align: center;
+	margin-bottom: 1rem;
+}
+
+.main-section {
+	flex-basis: 60%;
+}
+.side-section {
+	align-self: flex-start;
+	position: sticky;
+	top: 2rem;
+}
