@@ -29,12 +29,6 @@ export const PokemonList = (props: PokemonListProps) => {
 		reset
 	} = usePokemonsByType(element, setElement)
 
-	console.log('filteredPokemons', filteredPokemons);
-	console.log('--------');
-	
-	console.log('regularPokemons', regularPokemons);
-	
-
 	// handler for PokemonCard
 	const handleClickPokemon: MouseEventHandler = useCallback((event) => {
 		if (!onSelect) return;
