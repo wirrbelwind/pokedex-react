@@ -36,7 +36,7 @@ export const usePokemons = () => {
         setPokemons(prev => [...prev, pokemon]);
       }
     }
-  }, [])
+  }, [startIndex])
 
   return {
     pokemons,
