@@ -1,6 +1,6 @@
 export { extractStatValue } from './utils/extractStatValue'
-export { usePokemonsByType } from './hooks/usePokemonsByType'
+export { usePokemonsByType } from './hooks/_usePokemonsByType'
 export { type IElementType, elements } from './consts/elements'
 export type { IPokemon, IPokemonStat, IPokemonStatName } from './interfaces/pokemon'
-export { usePokemons } from './hooks/usePokemons'
+export { usePokemons } from './hooks/_usePokemons'
 export { useAllPokemons } from './hooks/useAllPokemons'

@@ -1,4 +1,4 @@
-import { useCallback, useDebugValue, useEffect, useState } from "react";
+import { useCallback, useDebugValue, useEffect, useMemo, useState } from "react";
 
 import {
   POKEMON_API_BASE_URL,
@@ -7,6 +7,7 @@ import { httpClient } from "shared/api";
 import { IPokemon } from "../interfaces/pokemon";
 import { IPokemonBrief, IPokemonBriefResponse } from "../interfaces/pokemon-brief";
 import { IElementType, elements } from "..";
+import axios from "axios";
 
 interface PokemonListResponse {
   results: Array<{
@@ -25,14 +26,23 @@ export const useAllPokemons = (
   const [pokemons, setPokemons] = useState<IPokemon[]>([]);
   const [isLoading, setIsLoading] = useState(false)
 
+  const cancelToken = useMemo(() => {
+    console.log('new cancel token');
+    return axios.CancelToken.source()
+  }, [element])
+
   //list of pokemon's {name, url}
   const [typedBriefList, setTypedBriefList] = useState<IPokemonBrief>([])
 
   const fetchRegularPokemonsChunk = useCallback(async () => {
-    console.log('fetchRegularPokemonsChunk', startIndex);
     setIsLoading(true)
 
-    const response = await httpClient.get<PokemonListResponse>(`${POKEMON_API_BASE_URL}/pokemon?limit=${pokemonsPerChunk}&offset=${startIndex}`);
+    const response = await httpClient.get<PokemonListResponse>(
+      `${POKEMON_API_BASE_URL}/pokemon?limit=${pokemonsPerChunk}&offset=${startIndex}`,
+      {
+        cancelToken: cancelToken.token
+      }
+    );
 
     setStartIndex(prev => {
       return prev + pokemonsPerChunk
@@ -45,10 +55,9 @@ export const useAllPokemons = (
       }
     }
     setIsLoading(false)
-  }, [startIndex])
+  }, [startIndex, cancelToken])
 
   const fetchTypedPokemonsChunk = useCallback(async () => {
-    console.log('fetchTypedPokemonsChunk', startIndex);
     setIsLoading(true)
 
     //specify end index for current chunk
@@ -59,7 +68,12 @@ export const useAllPokemons = (
     for (let i = startIndex; i < endIndex; i++) {
       //fetch specific pokemon by URL from briefList
       const url = typedBriefList[i].pokemon.url
-      const pokemon = (await httpClient.get<IPokemon>(url)).data
+      const pokemon = (await httpClient.get<IPokemon>(
+        url,
+        {
+          cancelToken: cancelToken.token
+        }
+      )).data
 
       setPokemons(prev => [...prev, pokemon]);
     }
@@ -68,7 +82,7 @@ export const useAllPokemons = (
       return prev + pokemonsPerChunk
     })
     setIsLoading(false)
-  }, [typedBriefList, element, startIndex])
+  }, [typedBriefList, element, startIndex, cancelToken])
 
   useEffect(() => {
     setIsLoading(true)
@@ -84,11 +98,21 @@ export const useAllPokemons = (
       fetchRegularPokemonsChunk()
     }
 
-    async function fetchBriefList(newElement: IElementType) {
-      const response = await httpClient.get<IPokemonBriefResponse>(`${POKEMON_API_BASE_URL}/type/${newElement}`);
-      setTypedBriefList(response.data.pokemon)
+    return () => {
+      console.log('effect element unmounted');
+      cancelToken.cancel()
     }
   }, [element])
+
+  const fetchBriefList = useCallback(async (newElement: IElementType) => {
+    const response = await httpClient.get<IPokemonBriefResponse>(
+      `${POKEMON_API_BASE_URL}/type/${newElement}`,
+      {
+        cancelToken: cancelToken.token
+      }
+    )
+    setTypedBriefList(response.data.pokemon)
+  }, [cancelToken])
 
   useEffect(() => {
     if (typedBriefList.length > 0) {
@@ -96,11 +120,6 @@ export const useAllPokemons = (
       fetchTypedPokemonsChunk()
     }
   }, [typedBriefList])
-
-  useEffect(() => {
-    console.log(isLoading);
-    
-  }, [isLoading])
 
 
   return {
@@ -110,6 +129,7 @@ export const useAllPokemons = (
     types: Object.keys(elements) as IElementType[],
     isLoading,
     reset: () => {
+      cancelToken.cancel()
       setStartIndex(1);
       setElement(null)
     }
