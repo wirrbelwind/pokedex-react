@@ -4,6 +4,7 @@ import { PokemonTable, pokemonModel } from "entities/pokemon";
 import { useMemo } from 'react';
 import { PokemonList } from 'widgets/PokemonList';
 import { extractStatValue } from 'entities/pokemon/model';
+import { Test } from 'widgets/PokemonList/ui/TestComponent/TestComponent';
 
 const IndexPage = () => {
 	const [selectedPokemon, setSelectedPokemon] = useState<pokemonModel.IPokemon | null>(null)
@@ -26,10 +27,11 @@ const IndexPage = () => {
 			<h1 className={moduleStyle.title} >Pokedex</h1>
 
 			<main className={moduleStyle.inner}>
-				<PokemonList
+				{/* <PokemonList
 					className={moduleStyle['main-section']}
 					onSelect={setSelectedPokemon}
-				/>
+				/> */}
+				<Test />
 				{
 					selectedPokemon &&
 

@@ -1,33 +1,29 @@
 import { PokemonCard } from "entities/pokemon";
-import moduleStyles from './style.module.scss'
-import { PokemonListProps } from "./props";
+import moduleStyles from '../PokemonList/style.module.scss'
+import { PokemonListProps } from "../PokemonList/props";
 import { MouseEventHandler, useCallback, useState } from "react";
 import { IElementType, useAllPokemons, usePokemons, usePokemonsByType } from "entities/pokemon/model";
 import { FilterPokemons } from "features/filter-pokemon";
 import { LoadMoreButton } from "../LoadMoreButton/LoadMoreButton";
 import classNames from "classnames";
 
-export const PokemonList = (props: PokemonListProps) => {
+export const Test = (props: PokemonListProps) => {
 	const { className, onSelect } = props
 	const containerClass = classNames(
 		moduleStyles.container,
 		className
 	)
 
-	// all pokemons
-	const {
-		fetchMorePokemons: fetchMorePokemons,
-		pokemons: regularPokemons,
-	} = usePokemons()
-
 	// filtered pokemons
 	const [element, setElement] = useState<null | IElementType>(null)
 	const {
-		fetchMorePokemons: fetchMorePokemonsType,
-		pokemonTypes,
-		pokemons: filteredPokemons,
-		reset
-	} = usePokemonsByType(element, setElement)
+		pokemons,
+		setPokemons,
+		fetchMorePokemons,
+		reset,
+		types,
+		isLoading
+	} = useAllPokemons(element, setElement)
 
 	// handler for PokemonCard
 	const handleClickPokemon: MouseEventHandler = useCallback((event) => {
@@ -39,19 +35,11 @@ export const PokemonList = (props: PokemonListProps) => {
 		const id = pokemonCard?.dataset?.pokemonId
 		if (!id) return;
 
-		const allPokemons = regularPokemons.concat(filteredPokemons)
-		const selectedPokemon = allPokemons.find(pokemon => Number(id) === pokemon.id)
+		const selectedPokemon = pokemons.find(pok => Number(id) === pok.id)
 		if (!selectedPokemon) return;
 
 		onSelect(selectedPokemon)
-	}, [regularPokemons, filteredPokemons])
-
-	// will be used as props
-	const currentListType = filteredPokemons.length > 0 ? 'filtered' : 'all'
-	const currentList = currentListType === 'filtered' ? filteredPokemons : regularPokemons
-	const handlerLoadMore = currentListType === 'filtered' ? fetchMorePokemonsType : fetchMorePokemons;
-
-	// useAllPokemons()
+	}, [pokemons])
 
 	return (
 		<div
@@ -59,7 +47,7 @@ export const PokemonList = (props: PokemonListProps) => {
 			onClick={handleClickPokemon}
 		>
 			<FilterPokemons
-				pokemonTypes={pokemonTypes}
+				pokemonTypes={types}
 				selectedPokemonType={element}
 				setPokemonType={setElement}
 				reset={reset}
@@ -67,13 +55,13 @@ export const PokemonList = (props: PokemonListProps) => {
 
 			<div className={moduleStyles.list}>
 				{
-					currentList.map(pokemon => {
+					pokemons.map(pok => {
 						return (<PokemonCard
-							key={pokemon.name}
-							name={pokemon.name}
-							elements={pokemon.types.map(typ => typ.type.name)}
-							avatarURL={pokemon.sprites.front_default}
-							id={pokemon.id}
+							key={pok.name}
+							name={pok.name}
+							elements={pok.types.map(typ => typ.type.name)}
+							avatarURL={pok.sprites.front_default}
+							id={pok.id}
 						/>)
 					})
 				}
@@ -81,7 +69,8 @@ export const PokemonList = (props: PokemonListProps) => {
 
 			<LoadMoreButton
 				type="button"
-				onClick={handlerLoadMore}
+				onClick={fetchMorePokemons}
+				disabled={isLoading}
 			>
 				Load more
 			</LoadMoreButton>
